@@ -16,8 +16,13 @@ if not TELEGRAM_TOKEN:
     except Exception:
         pass
 
-# Il tuo "indirizzo" Telegram personale. E' gia' il tuo, non cambiarlo.
-TELEGRAM_CHAT_ID = 7093323110
+# Chi riceve gli avvisi (i codici Telegram). Il primo sei tu.
+# Per aggiungere qualcuno: deve prima premere START sul bot, poi metti qui
+# il suo codice separato da una virgola.
+TELEGRAM_CHAT_IDS = [
+    7093323110,   # Luca
+    7358121122,   # @Banni98th
+]
 
 
 # --- 2) I BRAND DA SORVEGLIARE ----------------------------------------------

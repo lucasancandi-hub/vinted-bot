@@ -31,25 +31,34 @@ def manda_affare(annuncio, extra=""):
     if annuncio.get("taglia"):
         testo += f"\n📏 Taglia {annuncio['taglia']}"
 
-    dati = {
-        "chat_id": config.TELEGRAM_CHAT_ID,
-        "parse_mode": "HTML",
-        "reply_markup": json.dumps(tastiera),
-    }
-
-    # Proviamo con la foto; se non va, mandiamo solo il testo.
-    if annuncio.get("foto"):
-        try:
-            risposta = _post("sendPhoto", dict(dati, photo=annuncio["foto"], caption=testo))
-            if risposta.get("ok"):
-                return risposta
-        except Exception:
-            pass
-    return _post("sendMessage", dict(dati, text=testo))
+    # Mandiamo a tutti i destinatari.
+    for chat_id in config.TELEGRAM_CHAT_IDS:
+        dati = {
+            "chat_id": chat_id,
+            "parse_mode": "HTML",
+            "reply_markup": json.dumps(tastiera),
+        }
+        inviato = False
+        # Proviamo con la foto; se non va, mandiamo solo il testo.
+        if annuncio.get("foto"):
+            try:
+                if _post("sendPhoto", dict(dati, photo=annuncio["foto"], caption=testo)).get("ok"):
+                    inviato = True
+            except Exception:
+                pass
+        if not inviato:
+            try:
+                _post("sendMessage", dict(dati, text=testo))
+            except Exception:
+                pass
 
 
 def manda_testo(testo):
-    return _post("sendMessage", {"chat_id": config.TELEGRAM_CHAT_ID, "text": testo})
+    for chat_id in config.TELEGRAM_CHAT_IDS:
+        try:
+            _post("sendMessage", {"chat_id": chat_id, "text": testo})
+        except Exception:
+            pass
 
 
 def cancella(chat_id, message_id):
